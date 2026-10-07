@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 # Rider settings
 .idea/
+.DS_Store
