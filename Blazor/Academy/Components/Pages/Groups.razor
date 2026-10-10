@@ -1,0 +1,73 @@
+@page "/groups"
+@using Microsoft.EntityFrameworkCore
+@using Academy.Data
+@inject AcademyContext Db
+
+<PageTitle>Группы</PageTitle>
+
+<h1>Учебные группы</h1>
+
+@if (groups is null)
+{
+    <p><em>Загрузка...</em></p>
+} 
+else if (!groups.Any())
+{
+    <p><em>Список пуст.</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thread>
+            <tr>
+                <th>ID</th>
+                <th>Название группы</th>
+                <th>Направление</th>
+                <th>Дни недели</th>
+                <th>Время начала</th>
+            </tr>
+        </thread>
+        <tbody>
+            @foreach (var g in groups)
+            {
+                <tr>
+                    <td>@g.GroupId</td>
+                    <td>@g.GroupName</td>
+                    <td>@GetDirectionName(g.Direction)</td>
+                    <td>@GetWeekdaysText(g.Weekdays)</td>
+                    <td>@g.StartTime</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Academy.Models.Group>? groups;
+    private Dictionary<byte, string> directions = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        directions = await Db.Directions.ToDictionaryAsync(d => d.DirectionId, d => d.DirectionName);
+        groups = await Db.Groups.OrderBy(g => g.GroupName).ToListAsync();
+    }
+
+    private string GetDirectionName(byte? id)
+    {
+        if (id is null) return "-";
+        return directions.TryGetValue(id.Value, out var name) ? name : $"#{id}";
+    }
+
+    private string GetWeekdaysText(byte? mask)
+    {
+        if (mask is null) return "-";
+        var days = new[] { "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" };
+        var result = new List<string>();
+        for (int i = 0; i < days.Length; i++)
+        {
+            if ((mask.Value & (1 << i)) != 0) result.Add(days[i]);
+        }
+
+        return result.Count > 0 ? string.Join(", ", result) : "-";
+    }
+}

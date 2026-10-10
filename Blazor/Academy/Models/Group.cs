@@ -15,11 +15,11 @@ public class Group
     public string GroupName { get; set; } = string.Empty;
 
     [Column("direction")]
-    public byte Direction { get; set; }
+    public byte? Direction { get; set; }
 
     [Column("start_time")]
     public TimeSpan? StartTime { get; set; }
 
     [Column("weekdays")]
-    public byte Weekdays { get; set; }
+    public byte? Weekdays { get; set; }
 }
