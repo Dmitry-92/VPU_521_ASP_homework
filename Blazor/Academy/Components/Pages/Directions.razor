@@ -1,0 +1,46 @@
+@page "/directions"
+@using Microsoft.EntityFrameworkCore;
+@using Academy.Data;
+@inject AcademyContext Db
+
+<PageTitle>Направления</PageTitle>
+
+<h1>Направления обучения</h1>
+
+@if (directions is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (!directions.Any())
+{
+    <p><em>Список пуст.</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var d in directions)
+        {
+            <tr>
+                <td>@d.DirectionId</td>
+                <td>@d.DirectionName</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Academy.Models.Direction>? directions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        directions = await Db.Directions.OrderBy(d => d.DirectionId).ToListAsync();
+    }
+}

@@ -1,10 +1,15 @@
 using Academy.Components;
+using Academy.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<AcademyContext>(options => 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AcademyContext")));
 
 var app = builder.Build();
 
@@ -20,7 +25,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
+app.UseStaticFiles();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
