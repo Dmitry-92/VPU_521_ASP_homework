@@ -3,8 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Academy2.Models;
 
+[Table("Directions")]
 public class Direction
 {
-    public byte directionId { get; set; }
-    public string direction_name { get; set; } 
+    [Column("direction_id")]
+    public byte DirectionId { get; set; }
+
+    [Column("direction_name")]
+    public string DirectionName { get; set; } = string.Empty;
 }
