@@ -1,0 +1,36 @@
+@page
+@model Academy2.Components.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Direction[0].direction_name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Direction) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.direction_name)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.directionId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.directionId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.directionId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
