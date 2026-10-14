@@ -30,22 +30,17 @@ else
                 </div>
                 <div class="mb-3">
                     <label for="direction" class="form-label">direction:</label>
-                    <InputNumber id="direction" @bind-Value="Group.Direction" class="form-control" />
+                    <input type="number" id="direction" value="@Group.Direction" @onchange="OnDirectionChanged" class="form-control" />
                     <ValidationMessage For="() => Group.Direction" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="Weekdays" class="form-label">Weekdays:</label>
-                    <InputNumber id="Weekdays" @bind-Value="Group.Weekdays" class="form-control" />
+                    <input type="number" id="Weekdays" value="@Group.Weekdays" @onchange="OnWeekdaysChanged" class="form-control" />
                     <ValidationMessage For="() => Group.Weekdays" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="start_time" class="form-label">start_time:</label>
-                    <InputDate id="start_time" @bind-Value="Group.StartTime" class="form-control" />
-                    <ValidationMessage For="() => Group.StartTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
                     <label for="StartTime" class="form-label">StartTime:</label>
-                    <InputDate id="StartTime" @bind-Value="Group.StartTime" class="form-control" />
+                    <input type="time" id="StartTime" value="@Group.StartTime" @onchange="OnStartTimeChanged" class="form-control" />
                     <ValidationMessage For="() => Group.StartTime" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -64,6 +59,22 @@ else
 
     [SupplyParameterFromForm]
     private Group? Group { get; set; }
+    
+    private void OnDirectionChanged(ChangeEventArgs e)
+    {
+        if (byte.TryParse(e.Value?.ToString(), out var b))
+            Group!.Direction = b;
+        else
+            Group!.Direction = null;
+    }
+
+    private void OnWeekdaysChanged(ChangeEventArgs e)
+    {
+        if (byte.TryParse(e.Value?.ToString(), out var b))
+            Group!.Weekdays = b;
+        else
+            Group!.Weekdays = null;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,6 +85,13 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
+    }
+    private void OnStartTimeChanged(ChangeEventArgs e)
+    {
+        if (TimeSpan.TryParse(e.Value?.ToString(), out var ts))
+            Group!.StartTime = ts;
+        else
+            Group!.StartTime = null;
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
