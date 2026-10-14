@@ -16,7 +16,7 @@
 </p>
 
 <QuickGrid Class="table" Items="context.Directions">
-    <PropertyColumn Property="direction => direction.DirectionName" />
+    <PropertyColumn Property="direction => direction.DirectionName" Title="Название" Sortable="true" />
 
     <TemplateColumn Context="direction">
         <a href="@($"directions/edit?DirectionId={direction.DirectionId}")">Edit</a> |
