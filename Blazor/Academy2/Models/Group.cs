@@ -3,23 +3,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Academy2.Models;
 
+[Table("Groups")]
 public class Group
 {
     [Key]
-    public int Iid { get; set; }
-    [Required]
-    [StringLength(10, MinimumLength = 3)]
-    public string group_name { get; set; }
-    
-    [Column("direction", TypeName = "TINYINT")]
-    public int direction { get; set; }
-    
-    [Column("weekdays", TypeName = "TINYINT")]
-    public int learning_days { get; set; }
+    [Column("group_id")]
+    public int GroupId { get; set; }
 
-    [Column("start_time",  TypeName = "TIME(0)")]
-    public TimeOnly start_time { get; set; }
-    
-    [Column("start_date", TypeName = "DATE")]
-    public DateOnly  start_date { get; set; }
+    [Column("group_name")]
+    [Required]
+    public string GroupName { get; set; } = string.Empty;
+
+    [Column("direction")]
+    public byte? Direction { get; set; }
+
+    [Column("start_time")]
+    public TimeSpan? StartTime { get; set; }
+
+    [Column("weekdays")]
+    public byte? Weekdays { get; set; }
 }

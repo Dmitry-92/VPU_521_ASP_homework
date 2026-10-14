@@ -1,0 +1,44 @@
+@page "/groups"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using Academy2.Models
+@using Academy2.Data
+@inject IDbContextFactory<Academy2Context> DbFactory
+
+<PageTitle>Группы</PageTitle>
+
+<h1>Учебные группы</h1>
+
+<p>
+    <a href="groups/create">Добавить</a>
+</p>
+
+<QuickGrid Class="table" Items="groups">
+    <PropertyColumn Property="group => group.GroupName" Title="Группа" />
+    <TemplateColumn Title="Направление" Context="group">
+        @GetDirectionName(group.Direction)
+    </TemplateColumn>
+    <PropertyColumn Property="group => group.Weekdays" Title="Дни недели" />
+    <PropertyColumn Property="group => group.StartTime" Title="Время начала" />
+
+    <TemplateColumn Title="Действия" Context="group">
+        <a href="@($"groups/edit?GroupId={group.GroupId}")">Edit</a> |
+        <a href="@($"groups/details?GroupId={group.GroupId}")">Details</a> |
+        <a href="@($"groups/delete?GroupId={group.GroupId}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private IQueryable<Group>? groups;
+    private Dictionary<byte, string> directionNames = new();
+
+    protected override void OnInitialized()
+    {
+        var context = DbFactory.CreateDbContext();
+        directionNames = context.Directions.ToDictionary(d => d.DirectionId, d => d.DirectionName);
+        groups = context.Groups.OrderBy(g => g.GroupName);
+    }
+
+    private string GetDirectionName(byte? id)
+        => id.HasValue && directionNames.TryGetValue(id.Value, out var name) ? name : "—";
+}
