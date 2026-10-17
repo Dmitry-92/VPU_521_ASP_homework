@@ -19,8 +19,7 @@
         <input type="text" class="form-control" placeholder="Поиск по названию..." @bind="searchString" @bind:event="oninput" />
     </div>
 </p>
-
-<QuickGrid Class="table" Items="FilteredDirections">
+<QuickGrid Class="table" Items="FilteredDirections" Pagination="pagination">
     <PropertyColumn Property="direction => direction.DirectionName" Title="Название" Sortable="true" />
 
     <TemplateColumn Context="direction">
@@ -28,11 +27,14 @@
         <a href="@($"directions/details?DirectionId={direction.DirectionId}")">Details</a> |
         <a href="@($"directions/delete?DirectionId={direction.DirectionId}")">Delete</a>
     </TemplateColumn>
+    
+    <Paginator State="pagination" />
 </QuickGrid>
 
 @code {
     private Academy2Context context = default!;
     private string searchString = " ";
+    private PaginationState pagination = new() { ItemsPerPage = 5 };
 
     private IQueryable<Academy2.Models.Direction> FilteredDirections =>
         string.IsNullOrWhiteSpace(searchString)
