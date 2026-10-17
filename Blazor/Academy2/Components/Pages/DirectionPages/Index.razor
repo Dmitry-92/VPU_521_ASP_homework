@@ -15,9 +15,12 @@
 
 <p>
     <a href="directions/create">Create New</a>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Поиск по названию..." @bind="searchString" @bind:event="oninput" />
+    </div>
 </p>
 
-<QuickGrid Class="table" Items="context.Directions">
+<QuickGrid Class="table" Items="FilteredDirections">
     <PropertyColumn Property="direction => direction.DirectionName" Title="Название" Sortable="true" />
 
     <TemplateColumn Context="direction">
@@ -29,11 +32,19 @@
 
 @code {
     private Academy2Context context = default!;
+    private string searchString = " ";
+
+    private IQueryable<Academy2.Models.Direction> FilteredDirections =>
+        string.IsNullOrWhiteSpace(searchString)
+            ? context.Directions
+            : context.Directions.Where(d => d.DirectionName.Contains(searchString));    
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
     }
+
+  
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }
