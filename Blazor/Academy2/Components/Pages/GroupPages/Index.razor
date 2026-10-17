@@ -1,4 +1,5 @@
 @page "/groups"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using Academy2.Models
@@ -10,27 +11,40 @@
 <h1>Учебные группы</h1>
 
 <p>
-    <a href="groups/create">Добавить</a>
+    <a href="groups/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="groups">
-    <PropertyColumn Property="group => group.GroupName" Title="Группа" />
+<div class="mb-3">
+    <input type="text" class="form-control" placeholder="Поиск по названию группы..." @bind="searchString" @bind:event="oninput" />
+</div>
+
+<QuickGrid Class="table" Items="FilteredGroups" Pagination="pagination">
+    <PropertyColumn Property="group => group.GroupName" Title="Группа" Sortable="true"/>
     <TemplateColumn Title="Направление" Context="group">
         @GetDirectionName(group.Direction)
     </TemplateColumn>
-    <PropertyColumn Property="group => group.Weekdays" Title="Дни недели" />
-    <PropertyColumn Property="group => group.StartTime" Title="Время начала" />
+    <PropertyColumn Property="group => group.Weekdays" Title="Дни недели" Sortable="true"/>
+    <PropertyColumn Property="group => group.StartTime" Title="Время начала" Sortable="true"/>
 
     <TemplateColumn Title="Действия" Context="group">
         <a href="@($"groups/edit?GroupId={group.GroupId}")">Edit</a> |
         <a href="@($"groups/details?GroupId={group.GroupId}")">Details</a> |
         <a href="@($"groups/delete?GroupId={group.GroupId}")">Delete</a>
     </TemplateColumn>
+    
+    <Paginator State="pagination" />
 </QuickGrid>
 
 @code {
     private IQueryable<Group>? groups;
     private Dictionary<byte, string> directionNames = new();
+    private string searchString = "";
+    private PaginationState pagination = new() { ItemsPerPage = 5 };
+
+    private IQueryable<Group> FilteredGroups =>
+        string.IsNullOrWhiteSpace(searchString)
+            ? groups!
+            : groups!.Where(g => g.GroupName.Contains(searchString));    
 
     protected override void OnInitialized()
     {
