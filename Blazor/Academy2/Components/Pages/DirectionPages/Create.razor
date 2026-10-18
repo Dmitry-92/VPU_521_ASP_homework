@@ -16,9 +16,9 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="DirectionName" class="form-label">DirectionName:</label> 
-                <InputText id="DirectionName" @bind-Value="Direction.DirectionName" class="form-control" /> 
-                <ValidationMessage For="() => Direction.DirectionName" class="text-danger" /> 
+                <label for="direction_name" class="form-label">direction_name:</label> 
+                <InputText id="direction_name" @bind-Value="Direction.direction_name" class="form-control" /> 
+                <ValidationMessage For="() => Direction.direction_name" class="text-danger" /> 
             </div>        
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>

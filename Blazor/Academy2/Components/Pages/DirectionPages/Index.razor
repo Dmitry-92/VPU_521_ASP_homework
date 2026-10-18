@@ -1,13 +1,11 @@
 @page "/directions"
-@rendermode InteractiveServer
-@using Academy2.Data
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using Academy2.Models
+@using Academy2.Data
 @implements IAsyncDisposable
 @inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory
 @inject NavigationManager NavigationManager
-
 
 <PageTitle>Index</PageTitle>
 
@@ -15,38 +13,25 @@
 
 <p>
     <a href="directions/create">Create New</a>
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Поиск по названию..." @bind="searchString" @bind:event="oninput" />
-    </div>
 </p>
-<QuickGrid Class="table" Items="FilteredDirections" Pagination="pagination">
-    <PropertyColumn Property="direction => direction.DirectionName" Title="Название" Sortable="true" />
+
+<QuickGrid Class="table" Items="context.Directions">
+    <PropertyColumn Property="direction => direction.direction_name" />
 
     <TemplateColumn Context="direction">
-        <a href="@($"directions/edit?DirectionId={direction.DirectionId}")">Edit</a> |
-        <a href="@($"directions/details?DirectionId={direction.DirectionId}")">Details</a> |
-        <a href="@($"directions/delete?DirectionId={direction.DirectionId}")">Delete</a>
+        <a href="@($"directions/edit?direction_id={direction.direction_id}")">Edit</a> |
+        <a href="@($"directions/details?direction_id={direction.direction_id}")">Details</a> |
+        <a href="@($"directions/delete?direction_id={direction.direction_id}")">Delete</a>
     </TemplateColumn>
-    
-    <Paginator State="pagination" />
 </QuickGrid>
 
 @code {
     private Academy2Context context = default!;
-    private string searchString = " ";
-    private PaginationState pagination = new() { ItemsPerPage = 5 };
-
-    private IQueryable<Academy2.Models.Direction> FilteredDirections =>
-        string.IsNullOrWhiteSpace(searchString)
-            ? context.Directions
-            : context.Directions.Where(d => d.DirectionName.Contains(searchString));    
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
     }
-
-  
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

@@ -1,4 +1,5 @@
 @page "/groups/edit"
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using Academy2.Models
 @inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory
@@ -6,49 +7,50 @@
 
 <PageTitle>Edit</PageTitle>
 
+@* <h1>Edit</h1>
+
+<h2>Group</h2>
+<hr /> *@
 @if (Group is null)
 {
-    <p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else
 {
-    <h1>@Group.GroupName</h1>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Group" OnValidSubmit="UpdateGroup" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Group.GroupId" value="@Group.GroupId" />
+	<h1>@Group.group_name</h1>
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<EditForm method="post" Model="Group" OnValidSubmit="UpdateGroup" FormName="edit" Enhance>
+				<DataAnnotationsValidator />
+				<ValidationSummary role="alert"/>
+				<input type="hidden" name="Group.group_id" value="@Group.group_id" />
+				<div class="mb-3">
+					<span class="text-danger">*</span>
+					<label for="group_name" class="form-label">group_name:</label>
+					<InputText id="group_name" @bind-Value="Group.group_name" class="form-control" aria-required="true"/>
+					<ValidationMessage For="() => Group.group_name" class="text-danger" />
+				</div>
+
+				<ChooseDirection Group="Group" />
+
+                @* <div class="mb-3">
+                    <label for="learning_days" class="form-label">learning_days:</label>
+                    <InputNumber id="learning_days" @bind-Value="Group.learning_days" class="form-control" />
+                    <ValidationMessage For="() => Group.learning_days" class="text-danger" />
+                </div> *@
+
+				<LearningDays Group="Group" />
+
                 <div class="mb-3">
-                <span class="text-danger">*</span>
-                    <label for="GroupName" class="form-label">GroupName:</label>
-                    <InputText id="GroupName" @bind-Value="Group.GroupName" class="form-control" aria-required="true"/>
-                    <ValidationMessage For="() => Group.GroupName" class="text-danger" />
-                </div>
-                @*<div class="mb-3">
-                    <label for="direction" class="form-label">direction:</label>
-                    <InputSelect id="direction" @bind-Value="Group.direction" class="form-control">
-                        @using (Academy2.Data.Academy2Context context_ = DbFactory.CreateDbContext())
-                    {
-                        @foreach (ChooseDirection direction in context_.Directions)
-                        {
-                            <option value="@direction.DirectionId">@direction.DirectionName</option>
-                        }
-                    }
-                    </InputSelect>
-                    <ValidationMessage For="() => Group.direction" class="text-danger" />
-                </div>*@
-                <ChooseDirection Group="Group"/>
-                <div class="mb-3">
-                    <label for="Weekdays" class="form-label">Weekdays:</label>
-                    <input type="number" id="Weekdays" value="@Group.Weekdays" @onchange="OnWeekdaysChanged" class="form-control" />
-                    <ValidationMessage For="() => Group.Weekdays" class="text-danger" />
+                    <label for="start_time" class="form-label">start_time:</label>
+                    <InputDate Type="InputDateType.Time" id="start_time" @bind-Value="Group.start_time" class="form-control" />
+                    <ValidationMessage For="() => Group.start_time" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="StartTime" class="form-label">StartTime:</label>
-                    <InputDate Type="InputDateType.Time" id="StartTime" @bind-value="Group.StartTime" class="form-control" />
-                    <ValidationMessage For="() => Group.StartTime" class="text-danger" />
+                    <label for="start_date" class="form-label">start_date:</label>
+                    <InputDate id="start_date" @bind-Value="Group.start_date" class="form-control" />
+                    <ValidationMessage For="() => Group.start_date" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -62,43 +64,20 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    private int GroupId { get; set; }
+    private int group_id { get; set; }
 
     [SupplyParameterFromForm]
     private Group? Group { get; set; }
-    
-    private void OnDirectionChanged(ChangeEventArgs e)
-    {
-        if (byte.TryParse(e.Value?.ToString(), out var b))
-            Group!.direction = b;
-        else
-            Group!.direction = null;
-    }
-
-    private void OnWeekdaysChanged(ChangeEventArgs e)
-    {
-        if (byte.TryParse(e.Value?.ToString(), out var b))
-            Group!.Weekdays = b;
-        else
-            Group!.Weekdays = null;
-    }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Group ??= await context.Groups.FirstOrDefaultAsync(m => m.GroupId == GroupId);
+        Group ??= await context.Groups.FirstOrDefaultAsync(m => m.group_id == group_id);
 
         if (Group is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
-    }
-    private void OnStartTimeChanged(ChangeEventArgs e)
-    {
-        if (TimeOnly.TryParse(e.Value?.ToString(), out var ts))
-            Group!.StartTime = ts;
-        else
-            Group!.StartTime = null;
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -114,7 +93,7 @@ else
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!GroupExists(Group!.GroupId))
+            if (!GroupExists(Group!.group_id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -127,9 +106,9 @@ else
         NavigationManager.NavigateTo("/groups");
     }
 
-    private bool GroupExists(int GroupId)
+    private bool GroupExists(int group_id)
     {
         using var context = DbFactory.CreateDbContext();
-        return context.Groups.Any(e => e.GroupId == GroupId);
+        return context.Groups.Any(e => e.group_id == group_id);
     }
 }

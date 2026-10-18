@@ -9,6 +9,7 @@ namespace Academy2.Data
 {
     public class Academy2Context : DbContext
     {
+
         public Academy2Context (DbContextOptions<Academy2Context> options)
             : base(options)
         {

@@ -18,8 +18,8 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">DirectionName</dt>
-            <dd class="col-sm-10">@direction.DirectionName</dd>
+            <dt class="col-sm-2">direction_name</dt>
+            <dd class="col-sm-10">@direction.direction_name</dd>
         </dl>
         <EditForm method="post" Model="direction" OnValidSubmit="DeleteDirection" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(direction is null)">Delete</button> |
@@ -32,12 +32,12 @@
     private Direction? direction;
 
     [SupplyParameterFromQuery]
-    private int DirectionId { get; set; }
+    private int direction_id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        direction = await context.Directions.FirstOrDefaultAsync(m => m.DirectionId == DirectionId);
+        direction = await context.Directions.FirstOrDefaultAsync(m => m.direction_id == direction_id);
 
         if (direction is null)
         {

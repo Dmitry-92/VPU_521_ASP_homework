@@ -1,25 +1,32 @@
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Academy2.Models;
-
-[Table("Groups")]
-public class Group
+namespace Academy2.Models
 {
-    [Key]
-    [Column("group_id")]
-    public int GroupId { get; set; }
+	public class Group
+	{
+		[Key]
+		public int group_id { get; set; }
 
-    [Column("group_name")]
-    [Required]
-    public string GroupName { get; set; } = string.Empty;
+		[Required]
+		[StringLength(10, MinimumLength = 3)]
+		public string group_name { get; set; }
 
-    [Column("direction")]
-    public byte? direction { get; set; }
+		[Column("direction", TypeName = "TINYINT")]
+		[ForeignKey(nameof(Direction))]
+		public int direction { get; set; }
 
-    [Column("start_time")]
-    public TimeOnly? StartTime { get; set; }
+		[Column("weekdays", TypeName = "TINYINT")]
+		public int? learning_days { get; set; }
 
-    [Column("weekdays")]
-    public byte? Weekdays { get; set; }
+		[Column("start_time", TypeName = "TIME(0)")]
+		public TimeOnly? start_time { get; set; }
+
+		[Column("start_date", TypeName = "DATE")]
+		public DateOnly? start_date { get; set; }
+
+		//Navigation properties:
+		public Direction Direction { get; set; }	//Многие к одному (Direction - ОДИН)
+	}
 }

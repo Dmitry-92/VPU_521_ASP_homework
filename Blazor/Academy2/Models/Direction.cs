@@ -1,14 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Academy2.Models;
-
-[Table("Directions")]
-public class Direction
+namespace Academy2.Models
 {
-    [Column("direction_id")]
-    public byte DirectionId { get; set; }
-
-    [Column("direction_name")]
-    public string DirectionName { get; set; } = string.Empty;
+	public class Direction
+	{
+		[Key]
+		//Принудительное включение Автоинкремента (IDENTITY SPECIFICATION):
+		//[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Column("direction_id", TypeName = "TINYINT")]
+		public int direction_id { get; set; }
+		public string direction_name { get; set; }
+	}
 }

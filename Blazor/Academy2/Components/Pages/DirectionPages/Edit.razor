@@ -21,11 +21,11 @@ else
             <EditForm method="post" Model="Direction" OnValidSubmit="UpdateDirection" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
                 <ValidationSummary role="alert"/>
-                <input type="hidden" name="Direction.DirectionId" value="@Direction.DirectionId" />
+                <input type="hidden" name="Direction.direction_id" value="@Direction.direction_id" />
                 <div class="mb-3">
-                    <label for="DirectionName" class="form-label">DirectionName:</label>
-                    <InputText id="DirectionName" @bind-Value="Direction.DirectionName" class="form-control" />
-                    <ValidationMessage For="() => Direction.DirectionName" class="text-danger" />
+                    <label for="direction_name" class="form-label">direction_name:</label>
+                    <InputText id="direction_name" @bind-Value="Direction.direction_name" class="form-control" />
+                    <ValidationMessage For="() => Direction.direction_name" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -39,7 +39,7 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    private int DirectionId { get; set; }
+    private int direction_id { get; set; }
 
     [SupplyParameterFromForm]
     private Direction? Direction { get; set; }
@@ -47,7 +47,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Direction ??= await context.Directions.FirstOrDefaultAsync(m => m.DirectionId == DirectionId);
+        Direction ??= await context.Directions.FirstOrDefaultAsync(m => m.direction_id == direction_id);
 
         if (Direction is null)
         {
@@ -68,7 +68,7 @@ else
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!DirectionExists(Direction!.DirectionId))
+            if (!DirectionExists(Direction!.direction_id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -81,9 +81,9 @@ else
         NavigationManager.NavigateTo("/directions");
     }
 
-    private bool DirectionExists(int DirectionId)
+    private bool DirectionExists(int direction_id)
     {
         using var context = DbFactory.CreateDbContext();
-        return context.Directions.Any(e => e.DirectionId == DirectionId);
+        return context.Directions.Any(e => e.direction_id == direction_id);
     }
 }
