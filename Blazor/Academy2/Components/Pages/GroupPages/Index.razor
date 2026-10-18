@@ -21,7 +21,7 @@
 <QuickGrid Class="table" Items="FilteredGroups" Pagination="pagination">
     <PropertyColumn Property="group => group.GroupName" Title="Группа" Sortable="true"/>
     <TemplateColumn Title="Направление" Context="group">
-        @GetDirectionName(group.Direction)
+        @GetDirectionName(group.direction)
     </TemplateColumn>
     <PropertyColumn Property="group => group.Weekdays" Title="Дни недели" Sortable="true"/>
     <PropertyColumn Property="group => group.StartTime" Title="Время начала" Sortable="true"/>

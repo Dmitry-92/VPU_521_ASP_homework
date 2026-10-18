@@ -23,8 +23,8 @@
             </div>        
             <div class="mb-3">
                 <label for="direction" class="form-label">direction:</label>
-                <input type="number" id="direction" value="@Group.Direction" @onchange="OnDirectionChanged" class="form-control" />
-                <ValidationMessage For="() => Group.Direction" class="text-danger" />
+                <input type="number" id="direction" value="@Group.direction" @onchange="OnDirectionChanged" class="form-control" />
+                <ValidationMessage For="() => Group.direction" class="text-danger" />
             </div>
             <div class="mb-3">
                 <label for="Weekdays" class="form-label">Weekdays:</label>
@@ -54,9 +54,9 @@
     private void OnDirectionChanged(ChangeEventArgs e)
     {
         if (byte.TryParse(e.Value?.ToString(), out var b))
-            Group!.Direction = b;
+            Group!.direction = b;
         else
-            Group!.Direction = null;
+            Group!.direction = null;
     }
 
     private void OnWeekdaysChanged(ChangeEventArgs e)
@@ -69,7 +69,7 @@
     
     private void OnStartTimeChanged(ChangeEventArgs e)
     {
-        if (TimeSpan.TryParse(e.Value?.ToString(), out var ts))
+        if (TimeOnly.TryParse(e.Value?.ToString(), out var ts))
             Group.StartTime = ts;
         else
             Group.StartTime = null;
