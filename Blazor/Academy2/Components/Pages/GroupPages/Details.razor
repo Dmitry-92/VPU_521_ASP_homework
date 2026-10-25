@@ -28,6 +28,35 @@
             <dt class="col-sm-2">start_time</dt>			<dd class="col-sm-10">@group.start_time</dd>
             <dt class="col-sm-2">start_date</dt>			<dd class="col-sm-10">@group.start_date</dd>
         </dl>
+        <h3>Студенты</h3>
+        @if (group.Students != null && group.Students.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Дата рождения</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var student in group.Students)
+                {
+                    <tr>
+                        <td>@student.full_name</td>
+                        <td>@student.birth_date.ToShortDateString()</td>
+                        <td>@student.email</td>
+                        <td>@student.phone</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p><em>В этой группе пока нет студентов.</em></p>
+        }
         <div>
             <a href="@($"/groups")">Back to List</a>
         </div>
@@ -37,17 +66,18 @@
 @code {
     private Group? group;
 
-    [SupplyParameterFromQuery]
-    private int group_id { get; set; }
+    [SupplyParameterFromQuery] private int group_id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        group = await context.Groups.FirstOrDefaultAsync(m => m.group_id == group_id);
+        group = await context.Groups
+            .Include(g => g.Students)
+            .FirstOrDefaultAsync(m => m.group_id == group_id);
 
         if (group is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
     }
-}
+}    
