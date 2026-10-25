@@ -17,7 +17,11 @@
 	</p>
 </div>
 
-<QuickGrid Class="table" Items="context.Students.Include(s => s.Group).ThenInclude(g => g.Direction)">
+<div class="mb-3">
+	<input type="text" class="form-control" placeholder="Поиск по фамилии студента..." @bind="searchString" @bind:event="oninput" />
+</div>
+
+<QuickGrid Class="table" Items="FilteredStudents.Include(s => s.Group).ThenInclude(g => g.Direction)">
 	@*  <PropertyColumn Property="student => student.last_name" />
     <PropertyColumn Property="student => student.first_name" />
     <PropertyColumn Property="student => student.middle_name" /> *@
@@ -41,13 +45,22 @@
         <a href="@($"students/details?stud_id={student.stud_id}")">Details</a> |
         <a href="@($"students/delete?stud_id={student.stud_id}")">Delete</a>
     </TemplateColumn> *@
+	<Paginator State="pagination" />
 </QuickGrid>
 
 @code
 {
 	private Academy2Context context = default!;
+	private string searchString = "";
+	private PaginationState pagination = new() { ItemsPerPage = 5 };
 
 	GridSort<Student> sortBy = GridSort<Student>.ByAscending(s => s.last_name);
+
+	private IQueryable<Student> FilteredStudents =>
+		string.IsNullOrWhiteSpace(searchString)
+			? context.Students.Include(s => s.Group).ThenInclude(g => g.Direction)
+			: context.Students.Include(s => s.Group).ThenInclude(g => g.Direction)
+				.Where(s => s.last_name.Contains(searchString));
 
     protected override void OnInitialized()
     {
