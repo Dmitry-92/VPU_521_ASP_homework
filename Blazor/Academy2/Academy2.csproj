@@ -28,6 +28,11 @@
       <_ContentIncludedByDefault Remove="Components\Pages\DirectionPages\Details.razor" />
       <_ContentIncludedByDefault Remove="Components\Pages\DirectionPages\Edit.razor" />
       <_ContentIncludedByDefault Remove="Components\Pages\DirectionPages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Pages\StudentPages\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\StudentPages\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\StudentPages\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\StudentPages\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\StudentPages\Index.cshtml" />
     </ItemGroup>
 
 </Project>
