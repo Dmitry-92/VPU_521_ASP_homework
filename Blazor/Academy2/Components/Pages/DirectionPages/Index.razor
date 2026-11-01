@@ -9,15 +9,15 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<h1>Направление обучения</h1>
 
 <p>
     <a href="directions/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Directions">
+<QuickGrid Class="table" Items="context.Directions.Include(d => d.Groups)">
     <PropertyColumn Property="direction => direction.direction_name" />
-
+    <PropertyColumn Property="direction => direction.Groups.Count" />
     <TemplateColumn Context="direction">
         <a href="@($"directions/edit?direction_id={direction.direction_id}")">Edit</a> |
         <a href="@($"directions/details?direction_id={direction.direction_id}")">Details</a> |
