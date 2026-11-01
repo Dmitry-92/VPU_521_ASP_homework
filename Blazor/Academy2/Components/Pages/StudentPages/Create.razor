@@ -3,7 +3,7 @@
 @using Academy2.Models
 @inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory
 @inject NavigationManager NavigationManager
-
+@rendermode InteractiveServer
 <PageTitle>Create</PageTitle>
 
 <h1>Create</h1>
@@ -52,7 +52,10 @@
                 <label for="phone" class="form-label">phone:</label> 
                 <InputText id="phone" @bind-Value="Student.phone" class="form-control" /> 
                 <ValidationMessage For="() => Student.phone" class="text-danger" /> 
-            </div>        
+            </div>
+            
+            <ChooseGroup Student="Student" />
+            <Photo Human="Student" AllowChange="true" />
             @* <div class="mb-3">
                 <label for="photo" class="form-label">photo:</label> 
                 <InputText id="photo" @bind-Value="Student.photo" class="form-control" /> 

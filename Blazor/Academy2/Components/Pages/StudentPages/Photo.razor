@@ -26,7 +26,7 @@
     {
         URL = e.File;
         MemoryStream ms = new MemoryStream();
-        await URL.OpenReadStream().CopyToAsync(ms);
+        await URL.OpenReadStream(1024*1024*10).CopyToAsync(ms);
         Human.photo = ms.ToArray();
         ms.Close();
     }

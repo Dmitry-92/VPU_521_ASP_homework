@@ -1,0 +1,18 @@
+.human-container
+{
+    display: flex;
+    justify-content: space-between;
+}
+.human-text-fields
+{
+    width: 40%;
+}
+.photo-area
+{
+    width: 40%;
+}
+
+.photo-area img
+{
+    width: 100%;
+}
