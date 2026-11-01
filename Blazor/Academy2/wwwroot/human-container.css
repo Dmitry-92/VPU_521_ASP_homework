@@ -12,7 +12,15 @@
     width: 40%;
 }
 
+.photo-area > div
+{
+    border: solid 1px;
+    height: 100%;
+    background-color: lightgray;
+}
+
 .photo-area img
 {
     width: 100%;
+    height: 100%;
 }
