@@ -15,9 +15,11 @@
     <a href="directions/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Directions.Include(d => d.Groups)">
+<QuickGrid Class="table" Items="context.Directions.Include(d => d.Groups).ThenInclude(g => g.Students)">
     <PropertyColumn Property="direction => direction.direction_name" />
     <PropertyColumn Property="direction => direction.Groups.Count" />
+    <PropertyColumn Property="direction => direction.Groups.Sum(g => g.Students.Count)" />
+    
     <TemplateColumn Context="direction">
         <a href="@($"directions/edit?direction_id={direction.direction_id}")">Edit</a> |
         <a href="@($"directions/details?direction_id={direction.direction_id}")">Details</a> |

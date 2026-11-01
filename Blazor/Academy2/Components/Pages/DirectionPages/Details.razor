@@ -22,6 +22,8 @@
         <dl class="row">
             <dt class="col-sm-2">Количество групп </dt>
             <dd class="col-sm-10">@direction.Groups.Count</dd>
+            <dt class="col-sm-2">Количество студентов </dt>
+            <dd class="col-sm-10">@studentsCount</dd>
         </dl>
         <div>
             <a href="@($"/directions/edit?direction_id={direction.direction_id}")">Edit</a> |
@@ -49,6 +51,8 @@
     [SupplyParameterFromQuery]
     private int direction_id { get; set; }
 
+    int studentsCount = 0;
+
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
@@ -56,7 +60,7 @@
             Include(d => d.Groups).
             ThenInclude(g => g.Students).
             FirstOrDefaultAsync(m => m.direction_id == direction_id);
-
+        foreach (Group group in direction.Groups) studentsCount += group.Students.Count;
         if (direction is null)
         {
             NavigationManager.NavigateTo("notfound");
