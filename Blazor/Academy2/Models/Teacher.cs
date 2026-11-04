@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Academy2.Models;
 
+[Table("Teachers")]
 public class Teacher:Human
 {
     [Key]
