@@ -18,7 +18,7 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="Teacher" OnValidSubmit="UpdateTeacher" FormName="edit" Enhance>
+            <EditForm method="post" Model="Teacher" OnValidSubmit="UpdateTeacher" FormName="edit">
                 <DataAnnotationsValidator />
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="Teacher.teacher_id" value="@Teacher.teacher_id" />
@@ -102,24 +102,50 @@ else
     private async Task UpdateTeacher()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Update(Teacher!);
 
-        try
+        // 1. Загружаем актуального преподавателя с дисциплинами из БД
+        var dbTeacher = await context.Teacher
+            .Include(t => t.Disciplines)
+            .FirstOrDefaultAsync(t => t.teacher_id == Teacher!.teacher_id);
+
+        if (dbTeacher == null)
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!TeacherExists(Teacher!.teacher_id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            NavigationManager.NavigateTo("notfound");
+            return;
         }
 
+        // 2. Обновляем скалярные свойства
+        context.Entry(dbTeacher).CurrentValues.SetValues(Teacher!);
+
+        // 3. Синхронизируем коллекцию дисциплин
+        // Удаляем те, которых нет в новой коллекции
+        foreach (var discipline in dbTeacher.Disciplines.ToList())
+        {
+            if (!Teacher!.Disciplines.Any(d => d.discipline_id == discipline.discipline_id))
+            {
+                dbTeacher.Disciplines.Remove(discipline);
+            }
+        }
+
+        // Добавляем те, которых нет в старой коллекции
+        if (Teacher!.Disciplines != null)
+        {
+            foreach (var discipline in Teacher.Disciplines)
+            {
+                if (!dbTeacher.Disciplines.Any(d => d.discipline_id == discipline.discipline_id))
+                {
+                    var disciplineFromDb = await context.Disciplines.FindAsync(discipline.discipline_id);
+                    if (disciplineFromDb != null)
+                    {
+                        dbTeacher.Disciplines.Add(disciplineFromDb);
+                    }
+                }
+            }
+        }
+
+        // 4. Сохраняем
+        Console.WriteLine($"DEBUG: Teacher.Disciplines count = {Teacher?.Disciplines?.Count ?? -1}");
+        await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/teachers");
     }
 
