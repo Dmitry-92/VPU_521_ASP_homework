@@ -1,0 +1,64 @@
+@using Academy2.Models
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory
+@rendermode InteractiveServer
+
+<div class="mb-3">
+    <label class="form-label">Добавить дисциплину:</label>
+    <div class="d-flex">
+        <select class="form-control me-2" value="@selectedDisciplineId" @onchange="OnDisciplineChanged">
+            <option value="0">-- Выберите дисциплину --</option>
+            @foreach (var discipline in allDisciplines)
+            {
+                if (Teacher.Disciplines == null || !Teacher.Disciplines.Any(d => d.discipline_id == discipline.discipline_id))
+                {
+                    <option value="@discipline.discipline_id">@discipline.discipline_name</option>
+                }
+            }
+        </select>
+        <button type="button" class="btn btn-success" @onclick="AddDiscipline" disabled="@(selectedDisciplineId == 0)">Добавить</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public Teacher Teacher { get; set; } = default!;
+    [Parameter]
+    public EventCallback OnDisciplineAdded { get; set; }
+
+    private List<Discipline> allDisciplines = new();
+    private int selectedDisciplineId;
+
+    protected override void OnInitialized()
+    {
+        using var context = DbFactory.CreateDbContext();
+        allDisciplines = context.Disciplines.ToList();
+    }
+
+    private async Task AddDiscipline()
+    {
+        if (selectedDisciplineId == 0) return;
+        StateHasChanged();
+        await OnDisciplineAdded.InvokeAsync();
+
+        using var context = DbFactory.CreateDbContext();
+        var discipline = context.Disciplines.Find(selectedDisciplineId);
+        if (discipline != null)
+        {
+            Teacher.Disciplines = new List<Discipline>();
+        }
+        
+        if (!Teacher.Disciplines.Any(d => d.discipline_id == discipline.discipline_id))
+        {
+            Teacher.Disciplines.Add(discipline);
+            selectedDisciplineId = 0;
+        }
+    }
+    private void OnDisciplineChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id))
+        {
+            selectedDisciplineId = id;
+        }
+    }
+}    

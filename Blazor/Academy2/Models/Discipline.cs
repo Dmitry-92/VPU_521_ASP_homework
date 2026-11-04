@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Academy2.Models;
 
@@ -19,6 +20,7 @@ public class Discipline
     public int number_of_lessons { get; set; }
     
     //Navigation Properties:
+    [JsonIgnore]
     public ICollection<Teacher> Teachers { get; set; }
     
 }

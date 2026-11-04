@@ -14,5 +14,5 @@ public class Teacher:Human
     public int rate { get; set; }
     
     //Navigation Properties:
-    public ICollection<Discipline> Disciplines { get; set; }
+    public ICollection<Discipline> Disciplines { get; set; } =  new List<Discipline>();
 }

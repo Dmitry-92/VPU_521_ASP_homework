@@ -65,6 +65,8 @@ else
                     <InputText id="phone" @bind-Value="Teacher.phone" class="form-control" />
                     <ValidationMessage For="() => Teacher.phone" class="text-danger" />
                 </div>
+                
+                <ChooseDiscipline Teacher="Teacher" OnDisciplineAdded="StateHasChanged" />
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -85,7 +87,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Teacher ??= await context.Teacher.FirstOrDefaultAsync(m => m.teacher_id == teacher_id);
+        Teacher ??= await context.Teacher
+            .Include(t => t.Disciplines)
+            .FirstOrDefaultAsync(m => m.teacher_id == teacher_id);
 
         if (Teacher is null)
         {
@@ -98,7 +102,7 @@ else
     private async Task UpdateTeacher()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Attach(Teacher!).State = EntityState.Modified;
+        context.Update(Teacher!);
 
         try
         {
