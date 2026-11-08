@@ -19,6 +19,6 @@ public class Discipline
     public int number_of_lessons { get; set; }
     
     //Navigation Properties:
-    public ICollection<Teacher> Teachers { get; set; }
+    public ICollection<TeachersDisciplinesRelation> TDR { get; set; }
     
 }
