@@ -1,0 +1,70 @@
+@using Academy2.Models
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory;
+
+<form>
+    <h5>Выберите дисциплину</h5>
+    @if (Disciplines != null)
+    {
+        <InputSelect class="form-control" @bind-Value="discipline">
+            <option selected disabled value="-1">-- Выберите дисциплину --</option>
+            @foreach (Discipline discipline in Disciplines)
+            {
+                if(TDR.Any(tdr => tdr.discipline == discipline.discipline_id) || 
+                NewDisciplines.Any(nd => nd.discipline == discipline.discipline_id))
+                    continue;
+                <option value="@discipline.discipline_id">@discipline.discipline_name</option>
+            }
+        </InputSelect>
+        <button type="button" class="btn btn-primary" @onclick="AddDiscipline">Добавить</button>
+        <ul>
+            @foreach (TeachersDisciplinesRelation tdr in NewDisciplines)
+            {
+                <li>@tdr.Discipline.discipline_name</li>
+            }
+        </ul>
+        <hr />
+        @if (TDR != null)
+        {
+            <ul>
+                @foreach (TeachersDisciplinesRelation tdr in TDR)
+                {
+                    <li>@tdr.Discipline.discipline_name</li>
+                }
+            </ul>
+        }
+    }
+</form>
+
+@code {
+    [Parameter] public Teacher Teacher { get; set; }
+
+    ICollection<Discipline> Disciplines { get; set; }
+    ICollection<TeachersDisciplinesRelation> TDR { get; set; }
+    List<TeachersDisciplinesRelation> NewDisciplines = new List<TeachersDisciplinesRelation>();
+
+    int discipline = -1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using Academy2.Data.Academy2Context context = DbFactory.CreateDbContext();
+        Disciplines = await context.Disciplines.ToListAsync();
+        TDR = await context.TeachersDisciplinesRelation
+            .Where(tdr => tdr.teacher == Teacher.teacher_id)
+            .ToListAsync();
+    }
+
+    void AddDiscipline()
+    {
+        if (discipline == -1) return;
+        TeachersDisciplinesRelation newRelation = new TeachersDisciplinesRelation()
+        {
+            teacher = Teacher.teacher_id,
+            discipline = this.discipline
+        };
+        newRelation.Teacher = Teacher;
+        newRelation.Discipline = Disciplines.Where(d => d.discipline_id == discipline).First();
+        NewDisciplines.Add(newRelation);
+        discipline = -1;
+    }
+}
