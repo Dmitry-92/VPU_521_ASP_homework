@@ -2,7 +2,7 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory;
 
-<form>
+<form @onsubmit="Update">
     <h5>Выберите дисциплину</h5>
     @if (Disciplines != null)
     {
@@ -66,5 +66,22 @@
         newRelation.Discipline = Disciplines.Where(d => d.discipline_id == discipline).First();
         NewDisciplines.Add(newRelation);
         discipline = -1;
+    }
+
+    public async Task Update()
+    {
+        using Academy2.Data.Academy2Context context = DbFactory.CreateDbContext();
+        List<TeachersDisciplinesRelation> pairs = new List<TeachersDisciplinesRelation>();
+        foreach (TeachersDisciplinesRelation tdr in NewDisciplines)
+            pairs.Add
+            (
+                new TeachersDisciplinesRelation
+                {
+                    teacher = Teacher.teacher_id,
+                    discipline = tdr.discipline
+                }
+            );
+        await context.TeachersDisciplinesRelation.AddRangeAsync(pairs);
+        await context.SaveChangesAsync();
     }
 }

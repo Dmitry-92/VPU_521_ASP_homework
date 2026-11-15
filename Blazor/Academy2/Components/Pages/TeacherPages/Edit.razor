@@ -86,7 +86,7 @@ else
                     <ValidationMessage For="() => Teacher.full_name" class="text-danger" />
                 </div>*@
                     </div>
-            <AddDisciplines Teacher="Teacher" />
+            <AddDisciplines @ref="addDisciplines" Teacher="Teacher" />
         </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -104,6 +104,8 @@ else
 
     [SupplyParameterFromForm]
     private Teacher? Teacher { get; set; }
+    
+    AddDisciplines? addDisciplines;
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,6 +127,7 @@ else
 
         try
         {
+            addDisciplines.Update();
             await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
