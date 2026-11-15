@@ -20,5 +20,20 @@ namespace Academy2.Data
         public DbSet<Academy2.Models.Student> Students { get; set; } = default!;
         public DbSet<Academy2.Models.Teacher> Teachers { get; set; } = default!;
         public DbSet<Academy2.Models.TeachersDisciplinesRelation> TeachersDisciplinesRelation { get; set; } = default!;
+        public DbSet<Academy2.Models.DependentDiscipline> DependentDisciplines { get; set; } = default!;
+        public DbSet<Academy2.Models.RequiredDiscipline> RequiredDisciplines { get; set; } = default!;
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Составной ключ для DependentDiscipline
+            modelBuilder.Entity<DependentDiscipline>()
+                .HasKey(dd => new { dd.discipline, dd.dependent_discipline });
+
+            // Составной ключ для RequiredDiscipline
+            modelBuilder.Entity<RequiredDiscipline>()
+                .HasKey(rd => new { rd.discipline, rd.required_discipline });
+        }
     }
 }

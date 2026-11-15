@@ -29,7 +29,36 @@
             @* <dd class="col-sm-10">@discipline.Teachers</dd> *@
         </dl>
         <div>
-            
+            <h3>Зависимые дисциплины</h3>
+            @if (dependentDisciplines != null && dependentDisciplines.Any())
+            {
+                <ul>
+                    @foreach (var d in dependentDisciplines)
+                    {
+                        <li>@d.discipline_name</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p><em>Нет зависимых дисциплин.</em></p>
+            }
+
+            <h3>Требуемые дисциплины</h3>
+            @if (requiredDisciplines != null && requiredDisciplines.Any())
+            {
+                <ul>
+                    @foreach (var d in requiredDisciplines)
+                    {
+                        <li>@d.discipline_name</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p><em>Нет требуемых дисциплин.</em></p>
+            }
+
             <a href="@($"/disciplines")">Back to List</a>
         </div>
         <h3>Количество преподавателей: @discipline.TDR.Count</h3>
@@ -44,6 +73,8 @@
 
 @code {
     private Discipline? discipline;
+    private List<Discipline> dependentDisciplines = new();
+    private List<Discipline> requiredDisciplines = new();
 
     [SupplyParameterFromQuery]
     private int discipline_id { get; set; }
@@ -55,10 +86,23 @@
             .Include(d => d.TDR)
             .ThenInclude(tdr => tdr.Teacher)
             .FirstOrDefaultAsync(m => m.discipline_id == discipline_id);
+        
 
         if (discipline is null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
+        // Загружаем зависимые дисциплины
+        dependentDisciplines = await context.DependentDisciplines
+            .Where(dd => dd.discipline == discipline_id)
+            .Select(dd => dd.Dependent)
+            .ToListAsync();
+
+        // Загружаем требуемые дисциплины
+        requiredDisciplines = await context.RequiredDisciplines
+            .Where(rd => rd.discipline == discipline_id)
+            .Select(rd => rd.Required)
+            .ToListAsync();
     }
 }

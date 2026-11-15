@@ -6,7 +6,7 @@
     <h5>Выберите дисциплину</h5>
     @if (Disciplines != null)
     {
-        <InputSelect class="form-control" @bind-Value="discipline">
+        <select class="form-control" @bind="discipline">
             <option selected disabled value="-1">-- Выберите дисциплину --</option>
             @foreach (Discipline discipline in Disciplines)
             {
@@ -15,7 +15,7 @@
                     continue;
                 <option value="@discipline.discipline_id">@discipline.discipline_name</option>
             }
-        </InputSelect>
+        </select>
         <button type="button" class="btn btn-primary" @onclick="AddDiscipline">Добавить</button>
         <ul>
             @foreach (TeachersDisciplinesRelation tdr in NewDisciplines)
