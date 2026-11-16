@@ -1,0 +1,94 @@
+@using Academy2.Models
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<Academy2.Data.Academy2Context> DbFactory
+
+<div class="mb-3">
+    <label class="form-label">Зависимые дисциплины:</label>
+    <div class="d-flex mb-2">
+        <select class="form-control me-2" @bind="selectedDependentId">
+            <option value="0">-- Выберите дисциплину --</option>
+            @foreach (var d in allDisciplines)
+            {
+                if (d.discipline_id != Discipline.discipline_id && 
+                    !DependentDisciplines.Any(dd => dd.discipline_id == d.discipline_id))
+                {
+                    <option value="@d.discipline_id">@d.discipline_name</option>
+                }
+            }
+        </select>
+        <button type="button" class="btn btn-success" @onclick="AddDependent" disabled="@(selectedDependentId == 0)">Добавить</button>
+    </div>
+    <ul>
+        @foreach (var d in DependentDisciplines)
+        {
+            <li>@d.discipline_name</li>
+        }
+    </ul>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Требуемые дисциплины:</label>
+    <div class="d-flex mb-2">
+        <select class="form-control me-2" @bind="selectedRequiredId">
+            <option value="0">-- Выберите дисциплину --</option>
+            @foreach (var d in allDisciplines)
+            {
+                if (d.discipline_id != Discipline.discipline_id && 
+                    !RequiredDisciplines.Any(rd => rd.discipline_id == d.discipline_id))
+                {
+                    <option value="@d.discipline_id">@d.discipline_name</option>
+                }
+            }
+        </select>
+        <button type="button" class="btn btn-success" @onclick="AddRequired" disabled="@(selectedRequiredId == 0)">Добавить</button>
+    </div>
+    <ul>
+        @foreach (var d in RequiredDisciplines)
+        {
+            <li>@d.discipline_name</li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter] public Discipline Discipline { get; set; } = default!;
+    [Parameter] public List<Discipline> DependentDisciplines { get; set; } = new();
+    [Parameter] public List<Discipline> RequiredDisciplines { get; set; } = new();
+    [Parameter] public EventCallback OnRelationsChanged { get; set; }
+
+    private List<Discipline> allDisciplines = new();
+    private int selectedDependentId;
+    private int selectedRequiredId;
+
+    protected override void OnInitialized()
+    {
+        using var context = DbFactory.CreateDbContext();
+        allDisciplines = context.Disciplines.ToList();
+    }
+
+    private async Task AddDependent()
+    {
+        if (selectedDependentId == 0) return;
+        var d = allDisciplines.FirstOrDefault(x => x.discipline_id == selectedDependentId);
+        if (d != null && !DependentDisciplines.Any(x => x.discipline_id == d.discipline_id))
+        {
+            DependentDisciplines.Add(d);
+            selectedDependentId = 0;
+            StateHasChanged();
+            await OnRelationsChanged.InvokeAsync();
+        }
+    }
+
+    private async Task AddRequired()
+    {
+        if (selectedRequiredId == 0) return;
+        var d = allDisciplines.FirstOrDefault(x => x.discipline_id == selectedRequiredId);
+        if (d != null && !RequiredDisciplines.Any(x => x.discipline_id == d.discipline_id))
+        {
+            RequiredDisciplines.Add(d);
+            selectedRequiredId = 0;
+            StateHasChanged();
+            await OnRelationsChanged.InvokeAsync();
+        }
+    }
+}

@@ -32,6 +32,10 @@
                 <InputText id="teachers" @bind-Value="Discipline.Teachers" class="form-control" /> 
                 <ValidationMessage For="() => Discipline.Teachers" class="text-danger" /> 
             </div>      *@  
+            <EditDisciplineRelations Discipline="Discipline" 
+                                     DependentDisciplines="dependentDisciplines" 
+                                     RequiredDisciplines="requiredDisciplines" 
+                                     OnRelationsChanged="StateHasChanged" />
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -44,6 +48,8 @@
 @code {
     [SupplyParameterFromForm]
     private Discipline Discipline { get; set; } = default!;
+    private List<Discipline> dependentDisciplines = new();
+    private List<Discipline> requiredDisciplines = new();
 
     protected override void OnInitialized() => Discipline ??= new();
     
