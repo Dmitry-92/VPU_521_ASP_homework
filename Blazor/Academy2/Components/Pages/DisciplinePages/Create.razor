@@ -46,19 +46,41 @@
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private Discipline Discipline { get; set; } = default!;
+    [SupplyParameterFromForm] private Discipline Discipline { get; set; } = default!;
     private List<Discipline> dependentDisciplines = new();
     private List<Discipline> requiredDisciplines = new();
 
     protected override void OnInitialized() => Discipline ??= new();
-    
+
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddDiscipline()
     {
         using var context = DbFactory.CreateDbContext();
         context.Disciplines.Add(Discipline);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/disciplines");
+        
+        //Сохраняем зависимые дисциплины
+        foreach (var d in dependentDisciplines)
+        {
+            context.DependentDisciplines.Add(new DependentDiscipline
+            {
+                discipline = Discipline.discipline_id,
+                dependent_discipline = d.discipline_id
+            });
+        }
+        
+        //Сохраняем требуемые дисциплины
+        foreach (var r in requiredDisciplines)
+        {
+            context.RequiredDisciplines.Add(new RequiredDiscipline
+            {
+                discipline = Discipline.discipline_id,
+                required_discipline = r.discipline_id
+            });
+        }
+        
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/disciplines");    
+        
     }
-}
+}    
