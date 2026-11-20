@@ -5,7 +5,7 @@
 <div class="mb-3">
     <label class="form-label">Зависимые дисциплины:</label>
     <div class="d-flex mb-2">
-        <select class="form-control me-2" @bind="selectedDependentId">
+        <InputSelect class="form-control me-2" @bind-Value="selectedDependentId" TValue="int">
             <option value="0">-- Выберите дисциплину --</option>
             @foreach (var d in allDisciplines)
             {
@@ -15,7 +15,7 @@
                     <option value="@d.discipline_id">@d.discipline_name</option>
                 }
             }
-        </select>
+        </InputSelect>
         <button type="button" class="btn btn-success" @onclick="AddDependent" disabled="@(selectedDependentId == 0)">Добавить</button>
     </div>
     <ul>
@@ -29,7 +29,7 @@
 <div class="mb-3">
     <label class="form-label">Требуемые дисциплины:</label>
     <div class="d-flex mb-2">
-        <select class="form-control me-2" @bind="selectedRequiredId">
+        <InputSelect class="form-control me-2" @bind-Value="selectedRequiredId" TValue="int">
             <option value="0">-- Выберите дисциплину --</option>
             @foreach (var d in allDisciplines)
             {
@@ -39,7 +39,7 @@
                     <option value="@d.discipline_id">@d.discipline_name</option>
                 }
             }
-        </select>
+        </InputSelect>
         <button type="button" class="btn btn-success" @onclick="AddRequired" disabled="@(selectedRequiredId == 0)">Добавить</button>
     </div>
     <ul>
