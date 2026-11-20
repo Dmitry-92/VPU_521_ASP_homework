@@ -7,6 +7,7 @@ public class Discipline
 {
     [Key]
     [Column (TypeName = "SMALLINT")]
+    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int discipline_id { get; set; }
     
     [Required]

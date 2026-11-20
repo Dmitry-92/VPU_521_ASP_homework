@@ -13,19 +13,19 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <EditForm method="post" Model="Discipline" OnValidSubmit="AddDiscipline" FormName="create">
+        <EditForm Model="Discipline" OnValidSubmit="AddDiscipline" FormName="create">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
                 <span class="text-danger">*</span>
                 <label for="discipline_name" class="form-label">discipline_name:</label> 
-                <InputText id="discipline_name" @bind-Value="Discipline.discipline_name" @bind-Value:event="oninput" class="form-control" aria-required="true"/> 
+                <InputText id="discipline_name" @bind-Value="Discipline.discipline_name" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => Discipline.discipline_name" class="text-danger" /> 
             </div>        
             <div class="mb-3">
                 <span class="text-danger">*</span>
                 <label for="number_of_lessons" class="form-label">number_of_lessons:</label> 
-                <InputNumber id="number_of_lessons" @bind-Value="Discipline.number_of_lessons" @bind-Value:event="oninput" class="form-control" aria-required="true"/> 
+                <InputNumber id="number_of_lessons" @bind-Value="Discipline.number_of_lessons" @class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => Discipline.number_of_lessons" class="text-danger" /> 
             </div>        
             @*   <div class="mb-3">
@@ -51,7 +51,10 @@
     private List<Discipline> dependentDisciplines = new();
     private List<Discipline> requiredDisciplines = new();
 
-    protected override void OnInitialized() => Discipline ??= new();
+    protected override void OnInitialized()
+    {
+        Discipline ??= new Discipline();
+    }
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddDiscipline()

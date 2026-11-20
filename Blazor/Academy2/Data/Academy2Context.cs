@@ -26,6 +26,15 @@ namespace Academy2.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            // Явно указываем, что discipline_id генерируется в БД (Identity)
+            modelBuilder.Entity<Discipline>(entity =>
+            {
+                entity.HasKey(e => e.discipline_id); // Указываем первичный ключ
+                entity.Property(e => e.discipline_id)
+                    .UseIdentityColumn()          // Говорим, что это Identity (автоинкремент)
+                    .ValueGeneratedOnAdd();       // Говорим, что значение генерируется при добавлении
+            });
 
             // Составной ключ для DependentDiscipline
             modelBuilder.Entity<DependentDiscipline>()
